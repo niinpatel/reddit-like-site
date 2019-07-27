@@ -21,7 +21,7 @@ class App extends Component {
   };
 
   postToDatabase(post) {
-    fetch('./api/post', {
+    fetch('http://localhost:8000/api/post', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -40,7 +40,7 @@ class App extends Component {
     const username = e.target.username.value;
 
     if (username) {
-      fetch('/api/signup', {
+      fetch('http://localhost:8000/api/signup', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -104,7 +104,7 @@ class App extends Component {
     }
     let id = key;
 
-    fetch('./api/vote', {
+    fetch('http://localhost:8000/api/vote', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -122,7 +122,7 @@ class App extends Component {
 
   componentDidUpdate() {
     if (!this.state.updated) {
-      fetch('./api/all')
+      fetch('http://localhost:8000/api/all')
         .then((res) => res.json())
         .then((messages) => {
           this.setState({ messages, updated: true });
@@ -136,14 +136,15 @@ class App extends Component {
   componentDidMount() {
     let username = localStorage.getItem('username') || '';
 
-    fetch('./api/all')
+    console.log('fetching')
+    fetch('http://localhost:8000/api/all')
       .then((res) => res.json())
       .then((messages) => {
         this.setState({ messages, updated: true, initialLoad: true });
         if (username) {
           this.setState({ username, loggedIn: true });
         }
-      });
+      }).catch(e => console.log('err' + e))
   }
 
   render() {
@@ -162,24 +163,24 @@ class App extends Component {
                 <img src={loading} alt="Loading" width="100px" height="100px" />
               </div>
             ) : (
-              this.state.messages.map((post, index) => (
-                <Post
-                  key={post._id}
-                  index={index}
-                  post={post}
-                  vote={this.vote}
-                />
-              ))
-            )}
+                this.state.messages.map((post, index) => (
+                  <Post
+                    key={post._id}
+                    index={index}
+                    post={post}
+                    vote={this.vote}
+                  />
+                ))
+              )}
           </div>
           <div className="user">
             {this.state.loggedIn ? (
               <Postbox newPost={this.newPost} />
             ) : (
-              <div className="guest-msg">
-                <p>You can post something after signing up above ⬆️</p>
-              </div>
-            )}
+                <div className="guest-msg">
+                  <p>You can post something after signing up above ⬆️</p>
+                </div>
+              )}
           </div>
         </div>
         <div className="footer">
